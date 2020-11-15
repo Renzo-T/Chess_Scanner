@@ -50,12 +50,12 @@ def localization(img):
     
     
 
-    edges = cv2.Canny(crop_img,50,250,apertureSize = 7)
+    edges = cv2.Canny(crop_img,0,50,apertureSize = 3)
 
-    lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,100,15)
-    # for line in lines:
-    #     for x1,y1,x2,y2 in line:
-    #         cv2.line(crop_r,(x1,y1),(x2,y2),(255,0,0),5)
+    lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,100,20)
+    for line in lines:
+        for x1,y1,x2,y2 in line:
+            cv2.line(crop_r,(x1,y1),(x2,y2),(255,0,0),5)
     cannyPath = os.path.join(scriptDir, 'images/canny.png')
     cv2.imwrite(cannyPath, edges)
     crop_r_path = os.path.join(scriptDir, 'images/crop_r.png')
@@ -65,22 +65,23 @@ def localization(img):
     cv2.imshow("temp",crop_img)
     cv2.imshow("temp2", crop_r)
     cv2.waitKey(0)
+    return crop_r
 
-    crop = cropBorder(crop_r, lines)
-    dims = crop.shape
-    crop = crop[10:dims[0]-10,10:dims[1]-10]
+    # crop = cropBorder(crop_r, lines)
+    # dims = crop.shape
+    # crop = crop[10:dims[0]-10,10:dims[1]-10]
 
-    edges = cv2.Canny(crop,50,150,apertureSize = 3)
+    # edges = cv2.Canny(crop,50,150,apertureSize = 3)
 
-    lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,300,20)
-    # for line in lines:
-        # for x1,y1,x2,y2 in line:
-            # cv2.line(crop,(x1,y1),(x2,y2),(255,0,0),5)
-    crop2 = cropBorder(crop, lines)
-    cv2.imshow("1", crop)
-    cv2.imshow("2", crop2)
-    cv2.waitKey(0)
-    return crop2
+    # lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,300,20)
+    # # for line in lines:
+    #     # for x1,y1,x2,y2 in line:
+    #         # cv2.line(crop,(x1,y1),(x2,y2),(255,0,0),5)
+    # crop2 = cropBorder(crop, lines)
+    # cv2.imshow("1", crop)
+    # cv2.imshow("2", crop2)
+    # cv2.waitKey(0)
+    # return crop2
 
 
 def dice(img):
