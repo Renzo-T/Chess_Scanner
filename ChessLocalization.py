@@ -1,22 +1,103 @@
 import cv2
 import numpy as np
+import os
+
+def cropBorder(img, lines):
+    minX = float('inf')
+    maxX = float('-inf')
+    minY = float('inf')
+    maxY = float('-inf')
+    for line in lines:
+        for x1, y1, x2, y2 in line:
+            if(x1 < minX):
+                minX = x1
+            if(x2 < minX):
+                minX = x2
+            if(x1 > maxX):
+                maxX = x1
+            if(x2 > maxX):
+                maxX = x2
+            if(y1 < minY):
+                minY = y1
+            if(y2 < minY):
+                minY = y2
+            if(y1 > maxY):
+                maxY = y1
+            if(y2 > maxY):
+                maxY = y2 
+
+    crop = img[minY:maxY, minX:maxX]
+    return crop
+
+
 
 def localization(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # edges = cv2.Canny(gray,50,150,apertureSize = 3)
+    scriptDir = os.path.dirname(__file__)
 
-    # lines = cv2.HoughLines(edges,1,np.pi/180,200)
-    # for rho,theta in lines[0]:
-    #     a = np.cos(theta)
-    #     b = np.sin(theta)
-    #     x0 = a*rho
-    #     y0 = b*rho
-    #     x1 = int(x0 + 1000*(-b))
-    #     y1 = int(y0 + 1000*(a))
-    #     x2 = int(x0 - 1000*(-b))
-    #     y2 = int(y0 - 1000*(a))
+    img_blur = cv2.GaussianBlur(img,(5,5),0)
 
-    #     cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
-    ret, thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
-    cv2.imshow("temp", thresh1)
+    gray = cv2.cvtColor(img_blur, cv2.COLOR_BGR2GRAY)
+
+    edges = cv2.Canny(gray,100,200)
+
+    # ret, thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+    # cv2.imshow("temp", thresh1)
+    dims = gray.shape
+    # crop_r = img
+    # crop_img = edges
+    crop_r = img[100:dims[0]-40,500:dims[1]-570]
+    crop_img = edges[100:dims[0]-40,500:dims[1]-570]
+    
+    
+
+    edges = cv2.Canny(crop_img,50,250,apertureSize = 7)
+
+    lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,100,15)
+    # for line in lines:
+    #     for x1,y1,x2,y2 in line:
+    #         cv2.line(crop_r,(x1,y1),(x2,y2),(255,0,0),5)
+    cannyPath = os.path.join(scriptDir, 'images/canny.png')
+    cv2.imwrite(cannyPath, edges)
+    crop_r_path = os.path.join(scriptDir, 'images/crop_r.png')
+    cv2.imwrite(crop_r_path, edges)
+
+    cv2.imshow("temp-1", img)
+    cv2.imshow("temp",crop_img)
+    cv2.imshow("temp2", crop_r)
     cv2.waitKey(0)
+
+    crop = cropBorder(crop_r, lines)
+    dims = crop.shape
+    crop = crop[10:dims[0]-10,10:dims[1]-10]
+
+    edges = cv2.Canny(crop,50,150,apertureSize = 3)
+
+    lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,300,20)
+    # for line in lines:
+        # for x1,y1,x2,y2 in line:
+            # cv2.line(crop,(x1,y1),(x2,y2),(255,0,0),5)
+    crop2 = cropBorder(crop, lines)
+    cv2.imshow("1", crop)
+    cv2.imshow("2", crop2)
+    cv2.waitKey(0)
+    return crop2
+
+
+def dice(img):
+
+    dims = img.shape
+    y = dims[0]//8
+    x = dims[0]//8
+
+    curX = 0
+    curY = 0
+    for i in range(8):
+        for j in range(8): 
+            print(str(i) + " " + str(j))
+            cv2.imshow(str(i*8+j+1), img[curY:curY+y, curX:curX+x])
+            curX += x
+        curX = 0
+        curY += y
+    
+    cv2.waitKey(0)
+    return img
