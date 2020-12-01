@@ -4,6 +4,7 @@ from ChessLocalization import localization
 from ChessLocalization import dice
 from GPCam import gpcam
 import os
+import numpy as np
 # import keras
 from keras.models import Sequential
 from keras.layers import Conv2D
@@ -18,6 +19,7 @@ def main():
 
     frame = gpcam()
     board = localization(frame)
+    # board = cv2.rotate(board, cv2.ROTATE_90_COUNTERCLOCKWISE)
     # frame_path = os.path.join(scriptDir, 'images/full.png')
     # cv2.imwrite(frame_path, frame)
     while(1):

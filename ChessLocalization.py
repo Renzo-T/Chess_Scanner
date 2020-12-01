@@ -121,7 +121,7 @@ def dice(img):
         for j in range(8): 
             print(str(i) + " " + str(j))
             cv2.imshow(str(i*8+j+1), img[curY:curY+y, curX:curX+x])
-            time.sleep(3)
+            # time.sleep(3)
             # piece = input("Enter the type: ")
             piece = "nothing"
             path2 = os.path.join(path, str(piece))
