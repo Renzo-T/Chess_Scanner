@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 import os
+import random 
+import string
+import time
 
 def cropBorder(img, lines, type):
     dims = img.shape
@@ -84,7 +87,7 @@ def localization(img):
     img_blur = cv2.GaussianBlur(crop,(7,7),0)
     gray = cv2.cvtColor(img_blur, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray,50,150,apertureSize = 3)
-    cv2.imshow("edge2", edges)
+    # cv2.imshow("edge2", edges)
     lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,50,10)
     # lines = cv2.HoughLinesP(edges,1,np.pi/180,15,50,300,20)
     # for line in lines:
@@ -93,13 +96,21 @@ def localization(img):
     crop2 = cropBorder(crop, lines, 1)
     # cv2.imshow("1", crop)
     # cv2.imshow("2", crop2)
-    # cv2.waitKey(0)
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
     return crop2
 
 
-def dice(img):
+def get_random_name():
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(20))
+    return result_str
 
+def dice(img):
+    scriptDir = os.path.dirname(__file__)
+    path = os.path.join(scriptDir,'dataset/Train')
+    #path = os.path.join(scriptDir, 'dataset/Validation')
+    print(path)
     dims = img.shape
     y = dims[0]//8
     x = dims[0]//8
@@ -110,6 +121,13 @@ def dice(img):
         for j in range(8): 
             print(str(i) + " " + str(j))
             cv2.imshow(str(i*8+j+1), img[curY:curY+y, curX:curX+x])
+            time.sleep(3)
+            # piece = input("Enter the type: ")
+            piece = "nothing"
+            path2 = os.path.join(path, str(piece))
+            path2 = os.path.join(path2, str(get_random_name()) + '.png')
+            cv2.imwrite(path2, img[curY:curY+y, curX:curX+x])
+            cv2.destroyAllWindows()
             curX += x
         curX = 0
         curY += y
