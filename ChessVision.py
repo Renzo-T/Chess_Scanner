@@ -14,9 +14,9 @@ from tensorflow.keras import layers
 def main():
     scriptDir = os.path.dirname(__file__)
     img_path = os.path.join(scriptDir, 'images/full.png')
-    frame = cv2.imread(img_path)
+    # frame = cv2.imread(img_path)
 
-    # frame = gpcam()
+    frame = gpcam()
     board = localization(frame)
     # board = cv2.rotate(board, cv2.ROTATE_90_COUNTERCLOCKWISE)
     # frame_path = os.path.join(scriptDir, 'images/full.png')
